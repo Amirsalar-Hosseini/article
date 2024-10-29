@@ -30,5 +30,6 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.is_admin = True
         user.is_active = True
+        user.is_verify = True
         user.save(using=self._db)
         return user
