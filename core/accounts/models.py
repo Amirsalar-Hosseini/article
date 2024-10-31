@@ -24,7 +24,7 @@ class User(AbstractBaseUser):
     is_verify = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number', 'age']
 
     objects = UserManager()
 
