@@ -35,10 +35,11 @@ class UserUpdateView(APIView):
 
 class SendVerificationCodeView(APIView):
     permission_classes = (IsVerify, IsAuthenticated)
+    queryset = VerificationCode.objects.all()
 
     def post(self, request):
         user = User.objects.get(id=request.user.id)
-        last_code = VerificationCode.objects.filter(user=user).order_by('-created_at').first()
+        last_code = self.queryset.filter(user=user).order_by('-created_at').first()
 
         if last_code and last_code.created > timezone.now() - timezone.timedelta(minutes=1):
             return Response({'error': 'You can only request a code once per minute.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
@@ -51,12 +52,13 @@ class SendVerificationCodeView(APIView):
 
 class VerifyCodeView(APIView):
     permission_classes = (IsVerify, IsAuthenticated)
+    queryset = VerificationCode.objects.all()
 
     def post(self, request):
         user = User.objects.get(id=request.user.id)
         code = request.data.get('code')
 
-        last_code = VerificationCode.objects.filter(user=user, is_used=False).order_by('-created_at').first()
+        last_code = self.queryset.filter(user=user, is_used=False).order_by('-created_at').first()
 
         if not last_code:
             return Response({'error': 'No verification code found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -89,3 +91,7 @@ class UserLogOutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(APIView):
+    permission_classes = (IsAuthenticated,)
