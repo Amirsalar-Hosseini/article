@@ -23,9 +23,10 @@ class UserRegisterView(APIView):
 class UserUpdateView(APIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
 
     def put(self, request, *args, **kwargs):
-        user = User.objects.get(id=request.user.id)
+        user = self.queryset.get(id=request.user.id)
         ser_data = self.serializer_class(instance=user, data=request.data, partial=True)
         if ser_data.is_valid():
             ser_data.save()
@@ -95,3 +96,10 @@ class UserLogOutView(APIView):
 
 class UserProfileView(APIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def get(self, request):
+        user = self.queryset.get(id=request.user.id)
+        ser_data = self.serializer_class(user)
+        return Response(ser_data.data, status=status.HTTP_200_OK)
