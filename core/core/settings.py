@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Apps
     'home.apps.HomeConfig',
     'accounts.apps.AccountsConfig',
+    'article.apps.ArticleConfig',
     # Packages
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
