@@ -6,6 +6,7 @@ from permissions import IsVerify
 from .models import User, VerificationCode
 from .serializers import UserSerializer
 from django.utils import timezone
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserRegisterView(APIView):
@@ -33,7 +34,7 @@ class UserUpdateView(APIView):
 
 
 class SendVerificationCodeView(APIView):
-    permission_classes = (IsVerify,)
+    permission_classes = (IsVerify, IsAuthenticated)
 
     def post(self, request):
         user = User.objects.get(id=request.user.id)
@@ -49,7 +50,7 @@ class SendVerificationCodeView(APIView):
 
 
 class VerifyCodeView(APIView):
-    permission_classes = (IsVerify,)
+    permission_classes = (IsVerify, IsAuthenticated)
 
     def post(self, request):
         user = User.objects.get(id=request.user.id)
@@ -71,3 +72,20 @@ class VerifyCodeView(APIView):
             return Response({'message': 'Phone number verification complete.'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class UserLogOutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh')
+            if not refresh_token:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
