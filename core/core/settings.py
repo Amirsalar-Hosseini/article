@@ -44,6 +44,14 @@ INSTALLED_APPS = [
     # Packages
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt',
+    # Login With Google Packages
+    # 'django.contrib.sites',
+    # 'allauth',
+    # 'allauth.account',     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.google',
+    # ' rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # # All Auth middleware
+    # 'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -153,6 +163,8 @@ REST_FRAMEWORK = {
 
 from datetime import timedelta
 
+# REST_USE_JWT = True
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -160,3 +172,30 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
+
+# EMAIL SERVER
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_email@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_email_password'
+
+
+# # GOOGLE OAUTH LOGIN
+# SITE_ID = 1
+#
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         },
+#     }
+# }
+#
+# REST_AUTH_TOKEN_MODEL = None

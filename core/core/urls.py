@@ -8,6 +8,9 @@ urlpatterns = [
     path('', include('home.urls')),
     path('accounts/', include('accounts.urls')),
     path('article/', include('article.urls')),
+    # path('dj-rest-auth/', include('dj_rest_auth.urls')),
+    # path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
+    # path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:
