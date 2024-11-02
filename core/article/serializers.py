@@ -3,9 +3,21 @@ from .models import Article, Review, Like, Tag
 
 
 class ArticleSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
+
     class Meta:
         model = Article
         fields = '__all__'
+
+
+    def get_likes(self, obj):
+        result = obj.article_like.all()
+        return LikeSerializer(result, many=True).data
+
+    def get_reviews(self, obj):
+        result = obj.reviews.all()
+        return ReviewSerializer(result, many=True).data
 
 
 class ReviewSerializer(serializers.ModelSerializer):

@@ -46,7 +46,7 @@ class Review(models.Model):
     rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    reply = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies')
+    reply = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies', null=True, blank=True)
     is_reply = models.BooleanField(default=False)
 
     def __str__(self):
