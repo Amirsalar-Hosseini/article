@@ -5,7 +5,7 @@ from .models import Article, Review, Like, Tag
 class ArticleSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
-    tags = serializers.ListField(child=serializers.CharField())
+    tags = serializers.ListField(child=serializers.CharField(), write_only=True)
 
     class Meta:
         model = Article
@@ -21,15 +21,18 @@ class ArticleSerializer(serializers.ModelSerializer):
         return ReviewSerializer(result, many=True).data
 
     def create(self, validated_data):
-        tags_data = validated_data.pop('tags')
+        tags_data = validated_data.pop('tags', [])
         article = Article.objects.create(**validated_data)
-        tag_objects = []
         for tag_name in tags_data:
-            tag, created = Tag.objects.get_or_create(name=tag_name)
-            tag_objects.append(tag)
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            article.tags.add(tag)
 
-        article.tags.set(tag_objects)
         return article
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['tags'] = list(instance.tags.values_list('name', flat=True))
+        return representation
 
 
 class ReviewSerializer(serializers.ModelSerializer):

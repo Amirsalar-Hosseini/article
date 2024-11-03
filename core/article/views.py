@@ -35,8 +35,22 @@ class ArticleCreateView(APIView):
     queryset = Article.objects.all()
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save(author=request.user)
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        ser_data = self.serializer_class(data=request.data)
+        if ser_data.is_valid():
+            ser_data.save(author=request.user)
+            return Response(ser_data.data, status=status.HTTP_201_CREATED)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticleUpdateView(APIView):
+    serializer_class = ArticleSerializer
+    permission_classes = (IsVerify,)
+    queryset = Article.objects.all()
+
+    def put(self, request, pk):
+        article = self.queryset.get(pk=pk)
+        ser_data = self.serializer_class(instance=article, data=request.data, partial=True)
+        if ser_data.is_valid():
+            ser_data.save(author=request.user)
+            return Response(ser_data.data, status=status.HTTP_200_OK)
+        return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
