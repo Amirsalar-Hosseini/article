@@ -3,10 +3,10 @@ from accounts.models import User
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    poster = models.ImageField(upload_to="articles/%Y/%m/%d")
+    poster = models.ImageField(upload_to="articles/%Y/%m/%d", null=True, blank=True)
     duration = models.IntegerField(help_text='duration in minutes for reading')
     tags = models.ManyToManyField('Tag', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
