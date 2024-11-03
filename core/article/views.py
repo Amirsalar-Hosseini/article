@@ -1,4 +1,4 @@
-from permissions import IsVerify
+from permissions import IsVerify, IsOwner
 from .models import Article, Review, Like
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -44,7 +44,7 @@ class ArticleCreateView(APIView):
 
 class ArticleUpdateView(APIView):
     serializer_class = ArticleSerializer
-    permission_classes = (IsVerify,)
+    permission_classes = (IsVerify, IsOwner)
     queryset = Article.objects.all()
 
     def put(self, request, pk):
@@ -54,3 +54,15 @@ class ArticleUpdateView(APIView):
             ser_data.save(author=request.user)
             return Response(ser_data.data, status=status.HTTP_200_OK)
         return Response(ser_data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticleDeleteView(APIView):
+    serializer_class = ArticleSerializer
+    permission_classes = (IsVerify, IsOwner)
+    queryset = Article.objects.all()
+
+    def delete(self, request, pk):
+        article = self.queryset.get(pk=pk)
+        self.check_object_permissions(request, article)
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
