@@ -6,6 +6,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     tags = serializers.ListField(child=serializers.CharField(), write_only=True)
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
@@ -19,6 +20,9 @@ class ArticleSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         result = obj.reviews.all()
         return ReviewSerializer(result, many=True).data
+
+    def get_likes_count(self, obj):
+        return obj.likes_count()
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])
