@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from .serializers import ArticleSerializer, ReviewSerializer, LikeSerializer, TagSerializer
-from accounts.models import User
 
 class ArticleListView(APIView):
     serializer_class = ArticleSerializer
@@ -66,3 +65,14 @@ class ArticleDeleteView(APIView):
         self.check_object_permissions(request, article)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ArticleLikeView(APIView):
+    serializer_class = LikeSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Like.objects.all()
+
+    def get(self, request, article_pk):
+        article = Article.objects.get(pk=article_pk)
+        likes = self.queryset.filter(article=article)
+        ser_data = self.serializer_class(likes, many=True)
+        return Response(ser_data.data, status=status.HTTP_200_OK)
